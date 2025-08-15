@@ -1,0 +1,68 @@
+<!-- templates/accounts/profile_form.html -->
+{% extends "base.html" %}
+{% block title %}پروفایل | ToDoApp{% endblock %}
+{% block content %}
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h1 class="text-xl font-bold mb-1">تکمیل پروفایل</h1>
+    <p class="text-sm text-slate-500 mb-6">اطلاعات خود را وارد/ویرایش کنید.</p>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label class="block text-sm mb-1">{{ form.first_name.label }}</label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}<p class="text-red-600 text-xs mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="block text-sm mb-1">{{ form.last_name.label }}</label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}<p class="text-red-600 text-xs mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="block text-sm mb-1">{{ form.phone_number.label }}</label>
+          {{ form.phone_number }}
+          {% if form.phone_number.errors %}<p class="text-red-600 text-xs mt-1">{{ form.phone_number.errors.0 }}</p>{% endif %}
+          <p class="text-xs text-slate-500 mt-1">مثال: 09123456789</p>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-1">{{ form.birth_date.label }}</label>
+          {{ form.birth_date }}
+          {% if form.birth_date.errors %}<p class="text-red-600 text-xs mt-1">{{ form.birth_date.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="block text-sm mb-1">{{ form.bio.label }}</label>
+          {{ form.bio }}
+          {% if form.bio.errors %}<p class="text-red-600 text-xs mt-1">{{ form.bio.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="block text-sm mb-1">{{ form.avatar.label }}</label>
+          {{ form.avatar }}
+          {% if form.avatar.errors %}<p class="text-red-600 text-xs mt-1">{{ form.avatar.errors.0 }}</p>{% endif %}
+          {% if request.user.profile.avatar %}
+            <img src="{{ request.user.profile.avatar.url }}" alt="avatar" class="mt-2 h-20 w-20 rounded-full object-cover border" />
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button class="flex-1 rounded-xl bg-slate-900 text-white py-2.5">ذخیره</button>
+        <a href="{% url 'todos:list' %}" class="flex-1 text-center rounded-xl border border-slate-300 py-2.5">انصراف</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="date"], textarea');
+    inputs.forEach(el => el.classList.add('w-full','rounded-xl','border','border-slate-200','px-3','py-2','focus:outline-none','focus:ring','focus:ring-slate-200'));
+    const file = document.querySelector('input[type="file"]');
+    if (file) file.classList.add('block','w-full','text-sm','file:mr-4','file:py-2','file:px-4','file:rounded-full','file:border-0','file:text-sm','file:font-semibold','file:bg-slate-100','file:text-slate-900','hover:file:bg-slate-200');
+  </script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}تسک{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow p-6 space-y-6">
+  <div>
+    <h1 class="text-xl md:text-2xl font-extrabold">تسک</h1>
+    <p class="text-sm text-slate-600">عنوان، توضیحات، سررسید، اولویت و تگ‌ها را تنظیم کنید.</p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="space-y-4">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div>
+      <label class="block text-sm mb-1">{{ form.title.label }}</label>
+      {{ form.title }}
+      {% if form.title.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.title.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1">{{ form.description.label }}</label>
+      {{ form.description }}
+      {% if form.description.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.description.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div>
+        <label class="block text-sm mb-1">{{ form.priority.label }}</label>
+        {{ form.priority }}
+        {% if form.priority.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.priority.errors.0 }}</p>{% endif %}
+      </div>
+      <div>
+        <label class="block text-sm mb-1">{{ form.due_date.label }}</label>
+        {{ form.due_date }}
+        {% if form.due_date.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.due_date.errors.0 }}</p>{% endif %}
+      </div>
+      <div class="flex items-center gap-2 mt-6 md:mt-0">
+        {{ form.is_done }} <label class="text-sm">{{ form.is_done.label }}</label>
+        {% if form.is_done.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.is_done.errors.0 }}</p>{% endif %}
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1">{{ form.tags.label }}</label>
+      {{ form.tags }}
+      {% if form.tags.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.tags.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1">{{ form.new_tags.label }}</label>
+      {{ form.new_tags }}
+      <p class="text-xs text-slate-500 mt-1">مثال: «کار، خرید، پروژه»</p>
+      {% if form.new_tags.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.new_tags.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div class="flex gap-3">
+      <button class="rounded-xl bg-brand-900 text-white px-4 py-2">ذخیره</button>
+      <a href="{% url 'todos:list' %}" class="rounded-xl border px-4 py-2">انصراف</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}خانه | ToDoApp{% endblock %}
+{% block content %}
+<section class="max-w-6xl mx-auto text-center space-y-8">
+  <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">مدیریت کارها، ساده و سریع</h1>
+  <p class="text-slate-600 md:text-lg">با ToDoApp کارهات رو دسته‌بندی کن، انجام بده و همیشه جلوتر باش.</p>
+  <div class="flex items-center justify-center gap-3">
+    {% if user.is_authenticated %}
+      <a href="{% url 'todos:list' %}" class="rounded-2xl bg-brand-900 text-white px-5 py-3 shadow hover:shadow-md">برو به تسک‌ها</a>
+      <a href="{% url 'site:dashboard' %}" class="rounded-2xl border px-5 py-3 hover:bg-slate-50">داشبورد</a>
+    {% else %}
+      <a href="{% url 'accounts:signup' %}" class="rounded-2xl bg-brand-900 text-white px-5 py-3 shadow hover:shadow-md">شروع رایگان</a>
+      <a href="{% url 'accounts:login' %}" class="rounded-2xl border px-5 py-3 hover:bg-slate-50">ورود</a>
+    {% endif %}
+  </div>
+  <div class="grid md:grid-cols-3 gap-4 mt-10 text-right">
+    <div class="bg-white rounded-2xl p-5 shadow">
+      <div class="font-bold mb-2">اولویت‌بندی</div>
+      <p class="text-sm text-slate-600">بالا/متوسط/پایین برای تمرکز بیشتر.</p>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow">
+      <div class="font-bold mb-2">تگ‌گذاری</div>
+      <p class="text-sm text-slate-600">تگ‌های شخصی برای هر پروفایل.</p>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow">
+      <div class="font-bold mb-2">سررسید و آرشیو</div>
+      <p class="text-sm text-slate-600">مدیریت زمان و آرشیو بدون حذف.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

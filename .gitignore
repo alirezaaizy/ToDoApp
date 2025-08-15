@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# Django Stuff
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static_root/
+local_settings.py
+
+# Tailwind / Node
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnp/
+.pnp.js
+.cache/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+docker-compose.override.yml
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Coverage / Testing
+.coverage
+htmlcov/
+.tox/
+pytest_cache/
+
+# Migrations Cache
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
+# Collected Static Files
+static/

@@ -1,0 +1,36 @@
+# ./compose.yaml
+services:
+  db:
+    image: postgres:16-alpine
+    # برای مک‌های M1/M2 معمولاً لازم نیست، اگر مشکل معماری داشتی این خط را فعال کن:
+    # platform: linux/arm64/v8
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    env_file: .env
+    # فقط فولدر کد اپ را برای هات‌ریلود در dev mount کن
+    volumes:
+      - ./core:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    # (اختیاری) برای پایداری در dev
+    restart: unless-stopped
+
+volumes:
+  pgdata:

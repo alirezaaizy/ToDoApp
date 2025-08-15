@@ -1,0 +1,185 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark">
+  <title>{% block title %}ToDoApp{% endblock %}</title>
+
+  <!-- Tailwind + Typography (CDN) -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['class', '[data-theme="dark"]'],
+      theme: {
+        container: { center: true, padding: { DEFAULT: '1rem', md: '1.5rem' } },
+        extend: {
+          fontFamily: { sans: ['Vazirmatn', 'ui-sans-serif', 'system-ui'] },
+          colors: { brand: { 900: '#0f172a', 800: '#1e293b' } },
+          boxShadow: {
+            soft: '0 1px 2px rgba(0,0,0,0.05), 0 8px 24px rgba(15,23,42,0.06)'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- فونت فارسی خوانا -->
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <!-- استایل سراسری -->
+  <style>
+    html, body { overflow-x: hidden; }
+
+    /* Inputs: تخت و خوانا، بدون گرادینت */
+    input[type="text"], input[type="email"], input[type="password"], input[type="search"],
+    input[type="url"], input[type="tel"], input[type="number"], input[type="datetime-local"],
+    input[type="date"], input[type="time"], textarea, select {
+      width: 100%;
+      background: #fff !important;
+      color: #334155 !important; /* slate-700 */
+      border: 1px solid #e2e8f0; /* slate-200 */
+      border-radius: 12px;
+      padding: .5rem .75rem;
+      outline: none;
+      box-shadow: none;
+      appearance: none; -webkit-appearance: none;
+      transition: box-shadow .15s ease, border-color .15s ease, background-color .15s ease;
+    }
+    ::placeholder { color: #94a3b8; } /* slate-400 */
+    input:focus, textarea:focus, select:focus {
+      border-color: #cbd5e1; /* slate-300 */
+      box-shadow: 0 0 0 3px rgba(148,163,184,.35);
+      background: #fff !important;
+    }
+    input:disabled, textarea:disabled, select:disabled {
+      background: #f8fafc;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+    /* WebKit Autofill */
+    input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
+    textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus,
+    select:-webkit-autofill, select:-webkit-autofill:hover, select:-webkit-autofill:focus {
+      -webkit-text-fill-color: #0f172a !important;
+      box-shadow: 0 0 0 1000px #fff inset !important;
+      -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+    /* آیکن تقویم کمی ملایم‌تر */
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator { filter: grayscale(30%); opacity: .8; }
+
+    /* Buttons helpers */
+    .tw-btn { display:inline-flex; align-items:center; justify-content:center; border-radius:12px; padding:.5rem 1rem; font-size:.875rem; transition: box-shadow .15s ease, transform .05s ease; }
+    .tw-btn:active { transform: translateY(1px); }
+    .tw-btn--primary { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color:#fff; box-shadow:0 10px 28px rgba(15,23,42,.18); }
+    .tw-btn--primary:hover { box-shadow:0 12px 32px rgba(15,23,42,.24); }
+    .tw-btn--outline { background:#fff; color:#0f172a; border:1px solid #e2e8f0; }
+
+    .tw-card { background:#fff; border-radius:16px; box-shadow:0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(15,23,42,.06); }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans selection:bg-slate-900 selection:text-white">
+
+  <!-- Skip link -->
+  <a class="sr-only focus:not-sr-only focus:absolute top-2 right-2 z-50 bg-brand-900 text-white px-3 py-1 rounded-lg" href="#main">پرش به محتوا</a>
+
+  <!-- Header -->
+  <header class="bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-40 border-b border-slate-200">
+    <nav class="container max-w-7xl flex items-center justify-between py-3">
+      <div class="flex items-center gap-3">
+        <a href="{% url 'site:home' %}" class="flex items-center gap-2">
+          {# <img src="{% static 'img/logo.svg' %}" alt="لوگو" class="h-6 w-6"> #}
+          <span class="text-lg md:text-xl font-extrabold tracking-tight text-slate-900">ToDoApp</span>
+        </a>
+      </div>
+
+      <!-- دسکتاپ -->
+      <div class="hidden md:flex items-center gap-4 text-sm">
+        <a href="{% url 'site:home' %}" class="hover:underline">خانه</a>
+        <a href="{% url 'site:about' %}" class="hover:underline">درباره ی ما</a>
+        <a href="{% url 'site:contact' %}" class="hover:underline">ارتباط با ما</a>
+
+        {% if user.is_authenticated %}
+          <span class="hidden md:inline-block w-px h-5 bg-slate-200"></span>
+          <a href="{% url 'site:dashboard' %}" class="hover:underline">داشبورد</a>
+          <a href="{% url 'todos:list' %}" class="hover:underline">تسک‌ها</a>
+          <a href="{% url 'accounts:profile_edit' %}" class="hover:underline">پروفایل</a>
+          <!-- خروج (POST + دکمه شیک) -->
+          <form method="post" action="{% url 'accounts:logout' %}" class="inline">
+            {% csrf_token %}
+            <button class="tw-btn tw-btn--primary font-medium">
+              <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 12H3m12 0l-4-4m4 4l-4 4M21 3v18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              خروج
+            </button>
+          </form>
+        {% else %}
+          <span class="hidden md:inline-block w-px h-5 bg-slate-200"></span>
+          <a href="{% url 'accounts:login' %}" class="hover:underline">ورود</a>
+          <a href="{% url 'accounts:signup' %}" class="tw-btn tw-btn--primary">ثبت‌نام</a>
+        {% endif %}
+      </div>
+
+      <!-- موبایل -->
+      <details class="md:hidden relative">
+        <summary class="cursor-pointer px-3 py-1.5 rounded-lg border border-slate-200 text-sm">منو</summary>
+        <div class="absolute right-0 mt-2 min-w-[240px] tw-card p-3 space-y-1 text-sm">
+          <a href="{% url 'site:home' %}" class="block px-2 py-1 rounded-md hover:bg-slate-50">خانه</a>
+          <a href="{% url 'site:about' %}" class="block px-2 py-1 rounded-md hover:bg-slate-50">درباره</a>
+          <a href="{% url 'site:contact' %}" class="block px-2 py-1 rounded-md hover:bg-slate-50">تماس</a>
+          {% if user.is_authenticated %}
+            <div class="h-px bg-slate-200 my-1"></div>
+            <a href="{% url 'site:dashboard' %}" class="block px-2 py-1 rounded-md hover:bg-slate-50">داشبورد</a>
+            <a href="{% url 'todos:list' %}" class="block px-2 py-1 rounded-md hover:bg-slate-50">تسک‌ها</a>
+            <a href="{% url 'accounts:profile_edit' %}" class="block px-2 py-1 rounded-md hover:bg-slate-50">پروفایل</a>
+            <form method="post" action="{% url 'accounts:logout' %}" class="mt-1">
+              {% csrf_token %}
+              <button class="w-full tw-btn tw-btn--primary">خروج</button>
+            </form>
+          {% else %}
+            <div class="h-px bg-slate-200 my-1"></div>
+            <a href="{% url 'accounts:login' %}" class="block px-2 py-1 rounded-md hover:bg-slate-50">ورود</a>
+            <a href="{% url 'accounts:signup' %}" class="block px-2 py-1 rounded-md bg-slate-900 text-white text-center rounded-lg">ثبت‌نام</a>
+          {% endif %}
+        </div>
+      </details>
+    </nav>
+  </header>
+
+  <!-- Messages -->
+  <div class="container max-w-5xl mt-4 space-y-2" role="status" aria-live="polite">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="rounded-xl border p-3 text-sm
+                    {% if message.tags == 'success' %}border-emerald-200 bg-emerald-50 text-emerald-800
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}border-rose-200 bg-rose-50 text-rose-800
+                    {% elif message.tags == 'warning' %}border-amber-200 bg-amber-50 text-amber-800
+                    {% else %}border-slate-200 bg-white text-slate-800{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  {% block page_header %}{% endblock %}
+
+  <main id="main" class="container max-w-5xl py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t border-slate-200">
+    <div class="container max-w-7xl py-8 text-center text-xs text-slate-500">
+      ساخته‌شده با 💙
+    </div>
+  </footer>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

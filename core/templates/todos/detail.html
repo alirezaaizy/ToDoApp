@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}جزئیات تسک{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow p-6 space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold break-words">{{ object.title }}</h1>
+    <div class="flex gap-2">
+      <a class="rounded-xl border px-3 py-1.5 text-sm hover:bg-slate-50" href="{% url 'todos:edit' object.pk %}">ویرایش</a>
+      <a class="rounded-xl border px-3 py-1.5 text-sm hover:bg-rose-50 text-rose-700 border-rose-200" href="{% url 'todos:delete' object.pk %}">حذف</a>
+    </div>
+  </div>
+
+  {% if object.description %}
+    <div class="prose prose-slate max-w-none">
+      <p class="text-slate-700 whitespace-pre-line">{{ object.description }}</p>
+    </div>
+  {% endif %}
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-slate-600">
+    <div>اولویت: <span class="font-medium">{{ object.get_priority_display }}</span></div>
+    <div>وضعیت: <span class="font-medium">{% if object.is_done %}انجام‌شده{% else %}باز{% endif %}</span></div>
+    {% if object.due_date %}<div>سررسید: <span class="font-medium">{{ object.due_date|date:"Y-m-d H:i" }}</span></div>{% endif %}
+    <div>ایجاد: <span class="font-medium">{{ object.created_at|date:"Y-m-d" }}</span></div>
+    {% if object.completed_at %}<div>تاریخ انجام: <span class="font-medium">{{ object.completed_at|date:"Y-m-d H:i" }}</span></div>{% endif %}
+    {% if object.archived %}<div>وضعیت آرشیو: <span class="font-medium">بله</span></div>{% endif %}
+  </div>
+
+  {% if object.tags.all %}
+    <div class="flex flex-wrap gap-2">
+      {% for tag in object.tags.all %}
+        <span class="px-2 py-0.5 bg-slate-100 rounded-full text-slate-700 text-[11px]">#{{ tag.name }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if object.attachments.all %}
+    <div>
+      <div class="font-semibold mb-2">ضمیمه‌ها</div>
+      <ul class="space-y-1">
+        {% for a in object.attachments.all %}
+          <li>
+            <a href="{{ a.file.url }}" class="underline" target="_blank">دانلود</a>
+            <span class="text-xs text-slate-400">({{ a.uploaded_at|date:"Y-m-d" }})</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <div class="flex gap-2">
+    <form method="post" action="{% url 'todos:toggle' object.pk %}">
+      {% csrf_token %}
+      <button class="rounded-xl border px-3 py-1.5 text-sm hover:bg-slate-50">
+        {% if object.is_done %}بازگردان{% else %}انجام شد{% endif %}
+      </button>
+    </form>
+    {% if not object.archived %}
+      <form method="post" action="{% url 'todos:archive' object.pk %}">
+        {% csrf_token %}
+        <button class="rounded-xl border px-3 py-1.5 text-sm hover:bg-slate-50">آرشیو</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

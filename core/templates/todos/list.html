@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% block title %}تسک‌ها{% endblock %}
+
+{% block content %}
+<section class="space-y-6">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">تسک‌های من</h1>
+      <p class="text-sm text-slate-600">فیلتر، جست‌وجو و مدیریت سریع.</p>
+    </div>
+    <a href="{% url 'todos:create' %}" class="inline-flex items-center gap-2 rounded-xl bg-brand-900 text-white px-4 py-2 shadow hover:shadow-md transition">
+      <span class="text-lg">＋</span>
+      تسک جدید
+    </a>
+  </div>
+
+  <!-- Filters -->
+  <form method="get" class="bg-white rounded-2xl shadow p-4 grid grid-cols-1 md:grid-cols-7 gap-3">
+
+    <!-- Search (pill + centered icon) -->
+    <div class="md:col-span-2 relative h-11">
+      <svg class="pointer-events-none absolute right-3 inset-y-0 my-auto w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <input
+        name="q"
+        value="{{ request.GET.q }}"
+        placeholder="جست‌وجو در عنوان/توضیحات"
+        class="h-11 w-full rounded-full pr-10 pl-4 border border-slate-200 text-[15px]
+               focus:border-slate-300 focus:ring focus:ring-slate-200/70"
+      />
+    </div>
+
+    <!-- Status -->
+    <div class="relative h-11">
+      <select name="status"
+              class="h-11 w-full rounded-xl pr-3 pl-8 border border-slate-200 text-sm appearance-none
+                     focus:border-slate-300 focus:ring focus:ring-slate-200/70">
+        <option value="">همه وضعیت‌ها</option>
+        <option value="open"     {% if request.GET.status == 'open' %}selected{% endif %}>باز</option>
+        <option value="done"     {% if request.GET.status == 'done' %}selected{% endif %}>انجام‌شده</option>
+        <option value="archived" {% if request.GET.status == 'archived' %}selected{% endif %}>آرشیو</option>
+      </select>
+      <svg class="w-4 h-4 absolute left-2 inset-y-0 my-auto text-slate-400 pointer-events-none"
+           viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Priority -->
+    <div class="relative h-11">
+      <select name="priority"
+              class="h-11 w-full rounded-xl pr-3 pl-8 border border-slate-200 text-sm appearance-none
+                     focus:border-slate-300 focus:ring focus:ring-slate-200/70">
+        <option value="">همه اولویت‌ها</option>
+        <option value="1" {% if request.GET.priority == '1' %}selected{% endif %}>بالا</option>
+        <option value="2" {% if request.GET.priority == '2' %}selected{% endif %}>متوسط</option>
+        <option value="3" {% if request.GET.priority == '3' %}selected{% endif %}>پایین</option>
+      </select>
+      <svg class="w-4 h-4 absolute left-2 inset-y-0 my-auto text-slate-400 pointer-events-none"
+           viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Tag -->
+    <div class="relative h-11">
+      <select name="tag"
+              class="h-11 w-full rounded-xl pr-3 pl-8 border border-slate-200 text-sm appearance-none
+                     focus:border-slate-300 focus:ring focus:ring-slate-200/70">
+        <option value="">همه تگ‌ها</option>
+        {% for t in tags %}
+          <option value="{{ t.pk }}" {% if request.GET.tag == t.pk|stringformat:'s' %}selected{% endif %}>{{ t.name }}</option>
+        {% endfor %}
+      </select>
+      <svg class="w-4 h-4 absolute left-2 inset-y-0 my-auto text-slate-400 pointer-events-none"
+           viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Dates with inline pseudo-placeholder -->
+    <div class="md:col-span-2 grid grid-cols-2 gap-2">
+
+      <!-- از تاریخ -->
+      <div class="relative h-11">
+        <input
+          id="due_after"
+          name="due_after"
+          type="datetime-local"
+          value="{{ request.GET.due_after }}"
+          class="peer h-11 w-full rounded-xl border border-slate-200 text-sm
+                 focus:border-slate-300 focus:ring focus:ring-slate-200/70"
+        />
+        <span class="pointer-events-none absolute right-3 inset-y-0 my-auto text-[12px] text-slate-500
+                     transition-opacity duration-150
+                     {% if request.GET.due_after %}opacity-0{% else %}opacity-100{% endif %}">
+          از تاریخ
+        </span>
+      </div>
+
+      <!-- تا تاریخ -->
+      <div class="relative h-11">
+        <input
+          id="due_before"
+          name="due_before"
+          type="datetime-local"
+          value="{{ request.GET.due_before }}"
+          class="peer h-11 w-full rounded-xl border border-slate-200 text-sm
+                 focus:border-slate-300 focus:ring focus:ring-slate-200/70"
+        />
+        <span class="pointer-events-none absolute right-3 inset-y-0 my-auto text-[12px] text-slate-500
+                     transition-opacity duration-150
+                     {% if request.GET.due_before %}opacity-0{% else %}opacity-100{% endif %}">
+          تا تاریخ
+        </span>
+      </div>
+
+    </div>
+
+    <button class="h-11 tw-btn tw-btn--primary">اعمال فیلتر</button>
+  </form>
+
+  <!-- Desktop Table -->
+  <div class="hidden md:block bg-white rounded-2xl shadow overflow-hidden">
+    {% if object_list %}
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-100 text-slate-700">
+          <tr>
+            <th class="text-right px-4 py-3 font-semibold">عنوان</th>
+            <th class="text-right px-4 py-3 font-semibold">اولویت</th>
+            <th class="text-right px-4 py-3 font-semibold">سررسید</th>
+            <th class="text-right px-4 py-3 font-semibold">تگ‌ها</th>
+            <th class="text-left  px-4 py-3 font-semibold">اقدام</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          {% for t in object_list %}
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-3">
+                <a href="{% url 'todos:detail' t.pk %}" class="font-medium hover:underline break-words {% if t.is_done %}line-through text-slate-400{% endif %}">
+                  {{ t.title }}
+                </a>
+                {% if t.is_overdue %}
+                  <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">تاخیر</span>
+                {% endif %}
+                {% if t.archived %}
+                  <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border">آرشیو</span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3">
+                {% if t.priority == 1 %}
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200">بالا</span>
+                {% elif t.priority == 2 %}
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">متوسط</span>
+                {% else %}
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">پایین</span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3 text-slate-600">
+                {% if t.due_date %}{{ t.due_date|date:"Y-m-d H:i" }}{% else %}—{% endif %}
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex flex-wrap gap-1">
+                  {% for tag in t.tags.all %}
+                    <span class="px-2 py-0.5 bg-slate-100 rounded-full text-slate-700 text-[11px]">#{{ tag.name }}</span>
+                  {% empty %}—{% endfor %}
+                </div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <form method="post" action="{% url 'todos:toggle' t.pk %}">
+                    {% csrf_token %}
+                    <button class="tw-btn tw-btn--outline text-xs">{% if t.is_done %}بازگردان{% else %}انجام شد{% endif %}</button>
+                  </form>
+                  {% if not t.archived %}
+                    <form method="post" action="{% url 'todos:archive' t.pk %}">
+                      {% csrf_token %}
+                      <button class="tw-btn tw-btn--outline text-xs">آرشیو</button>
+                    </form>
+                  {% endif %}
+                  <a href="{% url 'todos:edit' t.pk %}" class="tw-btn tw-btn--outline text-xs">ویرایش</a>
+                  <a href="{% url 'todos:delete' t.pk %}" class="tw-btn tw-btn--outline text-xs text-rose-700 border-rose-200">حذف</a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% if is_paginated %}
+        <div class="px-4 py-3 border-t flex items-center justify-between text-sm">
+          <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+          <div class="flex gap-2">
+            {% if page_obj.has_previous %}
+              <a class="tw-btn tw-btn--outline" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">قبلی</a>
+            {% endif %}
+            {% if page_obj.has_next %}
+              <a class="tw-btn tw-btn--outline" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">بعدی</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="p-8 text-center text-slate-500">هیچ تسکی یافت نشد.</div>
+    {% endif %}
+  </div>
+
+  <!-- Mobile Cards -->
+  <div class="md:hidden space-y-3">
+    {% for t in object_list %}
+      <div class="tw-card p-4">
+        <div class="flex items-start justify-between gap-3">
+          <a href="{% url 'todos:detail' t.pk %}" class="font-semibold hover:underline break-words {% if t.is_done %}line-through text-slate-400{% endif %}">
+            {{ t.title }}
+          </a>
+          <div class="shrink-0">
+            {% if t.priority == 1 %}
+              <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200">بالا</span>
+            {% elif t.priority == 2 %}
+              <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">متوسط</span>
+            {% else %}
+              <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">پایین</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="mt-1 text-xs text-slate-500">
+          {% if t.due_date %}سررسید: {{ t.due_date|date:"Y-m-d H:i" }} · {% endif %}
+          ایجاد: {{ t.created_at|date:"Y-m-d" }}
+          {% if t.is_overdue %} · <span class="text-rose-700">تاخیر</span>{% endif %}
+        </div>
+        {% if t.tags.all %}
+          <div class="mt-2 flex flex-wrap gap-1">
+            {% for tag in t.tags.all %}
+              <span class="px-2 py-0.5 bg-slate-100 rounded-full text-slate-700 text-[11px]">#{{ tag.name }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <div class="mt-3 flex items-center gap-2">
+          <form method="post" action="{% url 'todos:toggle' t.pk %}">
+            {% csrf_token %}
+            <button class="tw-btn tw-btn--outline text-xs">تغییر وضعیت</button>
+          </form>
+          {% if not t.archived %}
+            <form method="post" action="{% url 'todos:archive' t.pk %}">
+              {% csrf_token %}
+              <button class="tw-btn tw-btn--outline text-xs">آرشیو</button>
+            </form>
+          {% endif %}
+          <a class="tw-btn tw-btn--outline text-xs" href="{% url 'todos:edit' t.pk %}">ویرایش</a>
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-center text-slate-500">هیچ تسکی نیست.</div>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  (function () {
+    // مدیریت برچسب‌های شبه-placeholder برای ورودی‌های تاریخ
+    const pairs = [
+      { input: document.getElementById('due_after')  },
+      { input: document.getElementById('due_before') },
+    ];
+    for (const p of pairs) {
+      if (!p.input) continue;
+      const label = p.input.parentElement.querySelector('span');
+      const toggle = () => { if (label) label.style.opacity = p.input.value ? '0' : '1'; };
+      p.input.addEventListener('input', toggle);
+      p.input.addEventListener('change', toggle);
+      toggle();
+    }
+  })();
+</script>
+{% endblock %}

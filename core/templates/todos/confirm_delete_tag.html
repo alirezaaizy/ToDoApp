@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}حذف تگ{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-2xl shadow p-6 space-y-4">
+  <h1 class="text-xl font-bold">حذف تگ</h1>
+  <p class="text-sm text-slate-600">آیا از حذف «#{{ object.name }}» مطمئن هستی؟</p>
+  <form method="post" class="flex gap-3">
+    {% csrf_token %}
+    <button class="rounded-2xl bg-rose-600 text-white px-4 py-2">بله، حذف</button>
+    <a href="{% url 'todos:tags' %}" class="rounded-2xl border px-4 py-2">انصراف</a>
+  </form>
+</div>
+{% endblock %}

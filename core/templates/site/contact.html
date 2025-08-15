@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}تماس با ما | ToDoApp{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto bg-white rounded-2xl shadow p-6 space-y-4">
+  <h1 class="text-2xl font-extrabold">ارتباط با ما</h1>
+  <p class="text-slate-600 text-sm">نظراتت برامون ارزشمنده.</p>
+
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div>
+      <label class="block text-sm mb-1">{{ form.name.label }}</label>
+      {{ form.name }}
+      {% if form.name.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.name.errors.0 }}</p>{% endif %}
+    </div>
+    <div>
+      <label class="block text-sm mb-1">{{ form.email.label }}</label>
+      {{ form.email }}
+      {% if form.email.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+    </div>
+    <div>
+      <label class="block text-sm mb-1">{{ form.message.label }}</label>
+      {{ form.message }}
+      {% if form.message.errors %}<p class="text-xs text-rose-600 mt-1">{{ form.message.errors.0 }}</p>{% endif %}
+    </div>
+
+    <button class="rounded-2xl bg-brand-900 text-white px-4 py-2">ارسال</button>
+  </form>
+</div>
+
+<script>
+  // کلاس‌های Tailwind برای ورودی‌ها (سریع و تمیز)
+  for (const el of document.querySelectorAll('input, textarea')) {
+    el.classList.add('w-full','rounded-xl','border','border-slate-200','px-3','py-2','focus:outline-none','focus:ring','focus:ring-slate-200');
+  }
+</script>
+{% endblock %}
