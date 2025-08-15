@@ -1,0 +1,4 @@
+core/templates/site/**      linguist-vendored
+
+screenshots/**             linguist-documentation
+
